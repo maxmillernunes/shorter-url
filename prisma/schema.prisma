@@ -8,31 +8,31 @@ datasource db {
 }
 
 model User {
-  id        String     @id @default(uuid())
-  email     String     @unique
-  password  String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  short_url ShortUrl[]
+  id         String     @id @default(uuid())
+  email      String     @unique
+  password   String
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime?  @updatedAt @map("updated_at")
+  short_urls ShortUrl[]
 
   @@map("users")
 }
 
 model ShortUrl {
   id            String  @id @default(uuid())
-  originalUrl   String
+  originalUrl   String  @map("original_url")
   slug          String  @unique
   alias         String? @unique
-  accessCounter Int     @default(0)
+  accessCounter Int     @default(0) @map("access_counter")
 
-  userId String?
+  userId String? @map("user_id")
   user   User?   @relation(fields: [userId], references: [id])
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   @@index([slug])
   @@index([alias])
-  @@map("short_url")
+  @@map("short_urls")
 }
