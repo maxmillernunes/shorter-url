@@ -13,6 +13,8 @@ import { UpdateOriginalUrlController } from './controllers/shorten/update-origin
 import { UpdateOriginalUrlUseCase } from '@/domain/url/application/use-cases/update-original-url';
 import { DeleteShortUrlController } from './controllers/shorten/delete-short-url.controller';
 import { DeleteShortUrlUseCase } from '@/domain/url/application/use-cases/delete-short-url';
+import { RedirectAndCountAccessController } from './controllers/shorten/redirect-and-count-access.controller';
+import { RedirectAndCountAccessShortUrlUseCase } from '@/domain/url/application/use-cases/redirect-and-count-access-short-url';
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -23,6 +25,7 @@ import { DeleteShortUrlUseCase } from '@/domain/url/application/use-cases/delete
     FetchShortUrlsByUserIdController,
     UpdateOriginalUrlController,
     DeleteShortUrlController,
+    RedirectAndCountAccessController,
   ],
   providers: [
     RegisterUserUseCase,
@@ -31,6 +34,7 @@ import { DeleteShortUrlUseCase } from '@/domain/url/application/use-cases/delete
     FetchUrlsByUserIdUseCase,
     UpdateOriginalUrlUseCase,
     DeleteShortUrlUseCase,
+    RedirectAndCountAccessShortUrlUseCase,
   ],
 })
 export class HttpModule {}

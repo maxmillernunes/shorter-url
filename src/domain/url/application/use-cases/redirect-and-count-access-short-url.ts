@@ -2,6 +2,7 @@ import { left, right, type Either } from '@/core/either';
 import { UrlsRepository } from '../repositories/urls-repository';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import type { OriginalUrl } from '../../enterprise/entities/value-objects/original-url';
+import { Injectable } from '@nestjs/common';
 
 interface RedirectAndCountAccessShortUrlUseCaseRequest {
   shortUrl: string;
@@ -12,6 +13,7 @@ type RedirectAndCountAccessShortUrlUseCaseResponse = Either<
   { originalUrl: OriginalUrl }
 >;
 
+@Injectable()
 export class RedirectAndCountAccessShortUrlUseCase {
   constructor(private urlsRepository: UrlsRepository) {}
 
