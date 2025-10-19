@@ -56,5 +56,7 @@ export class UpdateOriginalUrlController {
           throw new BadRequestException(error.message);
       }
     }
+
+    return result.value.url;
   }
 }
