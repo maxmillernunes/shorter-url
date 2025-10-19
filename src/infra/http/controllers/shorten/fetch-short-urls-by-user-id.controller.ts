@@ -1,9 +1,16 @@
-import { Controller, Get, HttpCode, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  HttpCode,
+  Query,
+} from '@nestjs/common';
 import { CurrentUser } from '@/infra/auth/current-user-decorator';
 import type { UserPayload } from '@/infra/auth/jwt.strategy';
 import { FetchUrlsByUserIdUseCase } from '@/domain/url/application/use-cases/fetch-urls-by-user-id';
 import z from 'zod';
 import { ZodValidationPipe } from '../../pipes/zod-validation-pipe';
+import { UrlPresenter } from '../../presenters/url-presenter';
 
 const pageQueryParamSchema = z
   .string()
@@ -28,11 +35,17 @@ export class FetchShortUrlsByUserIdController {
   ) {
     const userId = user?.sub;
 
-    const urls = await this.fetchShortUrlsByUserId.execute({
+    const result = await this.fetchShortUrlsByUserId.execute({
       userId,
       page,
     });
 
-    return urls;
+    if (result.isLeft()) {
+      throw new BadRequestException();
+    }
+
+    const urls = result.value.urls;
+
+    return { shortUrls: urls.map(UrlPresenter.toHTTP) };
   }
 }

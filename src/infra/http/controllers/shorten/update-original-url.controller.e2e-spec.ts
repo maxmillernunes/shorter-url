@@ -40,7 +40,6 @@ describe('Update Original URL (E2E)', () => {
         originalUrl: 'http://localhost:3333',
       });
 
-    expect(response.status).toBe(200);
-    expect(response.body).toBeTruthy();
+    expect(response.status).toBe(204);
   });
 });

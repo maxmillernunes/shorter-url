@@ -13,7 +13,7 @@ export interface UrlProps {
   alias?: Alias | null;
   accessCounter?: number | null;
   createdAt: Date;
-  updateAt?: Date | null;
+  updatedAt?: Date | null;
   deletedAt?: Date | null;
 }
 
@@ -42,8 +42,8 @@ export class Url extends Entity<UrlProps> {
     return this.props.createdAt;
   }
 
-  get updateAt() {
-    return this.props.updateAt;
+  get updatedAt() {
+    return this.props.updatedAt;
   }
 
   get deletedAt(): Date | null | undefined {
@@ -51,7 +51,7 @@ export class Url extends Entity<UrlProps> {
   }
 
   private touch() {
-    this.props.updateAt = new Date();
+    this.props.updatedAt = new Date();
   }
 
   set originalUrl(originalUrl: OriginalUrl) {

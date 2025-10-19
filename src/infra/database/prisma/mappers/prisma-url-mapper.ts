@@ -16,7 +16,7 @@ export class PrismaShortUrlMapper {
         originalUrl: OriginalUrl.create(raw.originalUrl),
         accessCounter: raw.accessCounter,
         createdAt: raw.createdAt,
-        updateAt: raw.updatedAt,
+        updatedAt: raw.updatedAt,
         deletedAt: raw.deletedAt,
       },
       new UniqueEntityId(raw.id),
@@ -32,7 +32,7 @@ export class PrismaShortUrlMapper {
       originalUrl: url.originalUrl.value,
       accessCounter: url.accessCounter ? url.accessCounter : undefined,
       createdAt: url.createdAt,
-      updatedAt: url.updateAt,
+      updatedAt: url.updatedAt,
       deletedAt: url.deletedAt,
     };
   }

@@ -27,7 +27,7 @@ export class UpdateOriginalUrlController {
   constructor(private updateOriginalUrl: UpdateOriginalUrlUseCase) {}
 
   @Put()
-  @HttpCode(200)
+  @HttpCode(204)
   async handle(
     @Body(bodyValidationPipe) body: UpdateOriginalUrlBodySchema,
     @Param('id') id: string,
@@ -56,7 +56,5 @@ export class UpdateOriginalUrlController {
           throw new BadRequestException(error.message);
       }
     }
-
-    return result.value.url;
   }
 }
