@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Url } from '../../enterprise/entities/url';
 import { Slug } from '../../enterprise/entities/value-objects/slug';
@@ -5,23 +6,24 @@ import { UrlsRepository } from '../repositories/urls-repository';
 import { left, right, type Either } from '@/core/either';
 import { UserNotAuthenticatedError } from './errors/user-not-authenticated-error';
 import { SlugAlreadyExistsError } from './errors/slug-already-exists-error';
-import type { SlugRegexRulesError } from '../../enterprise/entities/value-objects/errors/slug-regex-rules-error';
-import type { ReservedPathsSlugError } from '../../enterprise/entities/value-objects/errors/reserved-paths-slug-error';
+import type { AliasRegexRulesError } from '../../enterprise/entities/value-objects/errors/alias-regex-rules-error';
+import type { ReservedPathsAliasError } from '../../enterprise/entities/value-objects/errors/reserved-paths-alias-error';
 import { OriginalUrl } from '../../enterprise/entities/value-objects/original-url';
 import type { InvalidOriginalUrlError } from '../../enterprise/entities/value-objects/errors/invalid-original-url-error';
 import type { OriginalUrlTooLongError } from '../../enterprise/entities/value-objects/errors/original-url-too-long-error';
+import { Alias } from '../../enterprise/entities/value-objects/alias';
 
 interface CreateShortUrlUseCaseRequest {
   userId?: string;
-  slug?: string;
+  alias?: string;
   originalUrl: string;
 }
 
 type CreateShortUrlUseCaseResponse = Either<
   | UserNotAuthenticatedError
   | SlugAlreadyExistsError
-  | SlugRegexRulesError
-  | ReservedPathsSlugError
+  | AliasRegexRulesError
+  | ReservedPathsAliasError
   | InvalidOriginalUrlError
   | OriginalUrlTooLongError,
   {
@@ -29,22 +31,24 @@ type CreateShortUrlUseCaseResponse = Either<
   }
 >;
 
+@Injectable()
 export class CreateShortUrlUseCase {
   constructor(private urlsRepository: UrlsRepository) {}
 
   async execute({
     originalUrl,
-    slug,
+    alias,
     userId,
   }: CreateShortUrlUseCaseRequest): Promise<CreateShortUrlUseCaseResponse> {
+    let aliasCreated: Alias | undefined;
     let slugCreated: Slug;
 
-    if (slug && !userId) {
+    if (alias && !userId) {
       return left(new UserNotAuthenticatedError());
     }
 
-    if (slug) {
-      const customSlug = Slug.createCustom(slug);
+    if (alias) {
+      const customSlug = Alias.createCustom(alias);
 
       if (customSlug.isLeft()) {
         const error = customSlug.value;
@@ -52,20 +56,20 @@ export class CreateShortUrlUseCase {
         return left(error);
       }
 
-      const existsCustomSlug = await this.urlsRepository.findBySlug(
-        customSlug.value.slug.value,
+      const existsCustomSlug = await this.urlsRepository.findByAlias(
+        customSlug.value.alias.value,
       );
 
       if (existsCustomSlug) {
-        return left(new SlugAlreadyExistsError(customSlug.value.slug.value));
+        return left(new SlugAlreadyExistsError(customSlug.value.alias.value));
       }
 
-      slugCreated = customSlug.value.slug;
-    } else {
-      do {
-        slugCreated = Slug.createRadom();
-      } while (await this.urlsRepository.findBySlug(slugCreated.value));
+      aliasCreated = customSlug.value.alias;
     }
+
+    do {
+      slugCreated = Slug.createRadom();
+    } while (await this.urlsRepository.findBySlug(slugCreated.value));
 
     const originalUrlCreated = OriginalUrl.normalize(originalUrl);
 
@@ -76,6 +80,7 @@ export class CreateShortUrlUseCase {
     const url = Url.create({
       originalUrl: originalUrlCreated.value.originalUrl,
       slug: slugCreated,
+      alias: aliasCreated,
       userId: userId ? new UniqueEntityId(userId) : null,
     });
 

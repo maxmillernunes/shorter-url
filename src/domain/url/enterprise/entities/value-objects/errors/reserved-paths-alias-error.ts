@@ -1,4 +1,4 @@
-export class ReservedPathsSlugError extends Error {
+export class ReservedPathsAliasError extends Error {
   constructor() {
     super('Short invalid.');
   }

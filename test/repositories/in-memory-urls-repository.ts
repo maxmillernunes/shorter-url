@@ -33,6 +33,20 @@ export class InMemoryUrlsRepository implements UrlsRepository {
     return url;
   }
 
+  async findByAlias(alias: string): Promise<Url | null> {
+    const url = this.items.find(
+      (item) =>
+        (item.deletedAt !== undefined || item.deletedAt !== null) &&
+        item.slug.value === alias,
+    );
+
+    if (!url) {
+      return null;
+    }
+
+    return url;
+  }
+
   async findManyByUserId(
     userId: string,
     { page }: PaginationParams,

@@ -1,14 +1,15 @@
 import { InMemoryUrlsRepository } from '@test/repositories/in-memory-urls-repository';
 import { CreateShortUrlUseCase } from './create-short-url';
-import { Slug } from '../../enterprise/entities/value-objects/slug';
+import { Alias } from '../../enterprise/entities/value-objects/alias';
 import { Url } from '../../enterprise/entities/url';
 import { UserNotAuthenticatedError } from './errors/user-not-authenticated-error';
-import { SlugRegexRulesError } from '../../enterprise/entities/value-objects/errors/slug-regex-rules-error';
-import { ReservedPathsSlugError } from '../../enterprise/entities/value-objects/errors/reserved-paths-slug-error';
+import { AliasRegexRulesError } from '../../enterprise/entities/value-objects/errors/alias-regex-rules-error';
+import { ReservedPathsAliasError } from '../../enterprise/entities/value-objects/errors/reserved-paths-alias-error';
 import { OriginalUrl } from '../../enterprise/entities/value-objects/original-url';
 import { InvalidOriginalUrlError } from '../../enterprise/entities/value-objects/errors/invalid-original-url-error';
 import { ORIGINAL_URL_LENGTH } from '@/core/types/constants';
 import { OriginalUrlTooLongError } from '../../enterprise/entities/value-objects/errors/original-url-too-long-error';
+import { Slug } from '../../enterprise/entities/value-objects/slug';
 
 let inMemoryUrlsRepository: InMemoryUrlsRepository;
 let sut: CreateShortUrlUseCase;
@@ -33,17 +34,18 @@ describe('Create Short URL', () => {
     }
   });
 
-  it('should be able to create url short with custom slug', async () => {
+  it('should be able to create url short with custom alias', async () => {
     const result = await sut.execute({
       originalUrl: 'https://site.com.br',
-      slug: 'my-site',
+      alias: 'my-site',
       userId: 'user-1',
     });
 
     expect(result.isRight()).toBeTruthy();
     if (result.isRight()) {
       expect(result.value.url.slug).toBeInstanceOf(Slug);
-      expect(result.value.url.slug.value).toEqual('my-site');
+      expect(result.value.url.alias).toBeInstanceOf(Alias);
+      expect(result.value.url.alias!.value).toEqual('my-site');
       expect(inMemoryUrlsRepository.items[0]).toEqual(result.value.url);
     }
   });
@@ -51,14 +53,14 @@ describe('Create Short URL', () => {
   it('should be able to create url short normalizing the original url', async () => {
     const result = await sut.execute({
       originalUrl: ' https://site.com.br ',
-      slug: 'my-site',
+      alias: 'my-site',
       userId: 'user-1',
     });
 
     expect(result.isRight()).toBeTruthy();
     if (result.isRight()) {
       expect(result.value.url.originalUrl).toBeInstanceOf(OriginalUrl);
-      expect(result.value.url.slug.value).toEqual('my-site');
+      expect(result.value.url.alias!.value).toEqual('my-site');
       expect(inMemoryUrlsRepository.items[0].originalUrl.value).toEqual(
         'https://site.com.br',
       );
@@ -66,17 +68,17 @@ describe('Create Short URL', () => {
   });
 
   it('should be able to create url short When occurs to conflict', async () => {
-    const mockSlug1 = Slug.create('ABC123');
-    const mockSlug2 = Slug.create('XYZ999');
+    const mockAlias1 = Slug.create('ABC123');
+    const mockAlias2 = Slug.create('XYZ999');
 
     const spyCreateRandom = jest
       .spyOn(Slug, 'createRadom')
-      .mockReturnValueOnce(mockSlug1) // first try (does not working)
-      .mockReturnValueOnce(mockSlug2); // second try (working)
+      .mockReturnValueOnce(mockAlias1) // first try (does not working)
+      .mockReturnValueOnce(mockAlias2); // second try (working)
 
     const url = Url.create({
       originalUrl: OriginalUrl.create('https://existing.com'),
-      slug: mockSlug1,
+      slug: mockAlias1,
     });
     await inMemoryUrlsRepository.create(url);
 
@@ -87,9 +89,9 @@ describe('Create Short URL', () => {
     if (result.isRight()) {
       expect(result.value.url.slug).toBeInstanceOf(Slug);
       expect(result.value.url.originalUrl).toBeInstanceOf(OriginalUrl);
-      expect(result.value.url.slug.value).toBe(mockSlug2.value);
+      expect(result.value.url.slug.value).toBe(mockAlias2.value);
       expect(spyCreateRandom).toHaveBeenCalledTimes(2);
-      expect(inMemoryUrlsRepository.items[1].slug).toBe(mockSlug2);
+      expect(inMemoryUrlsRepository.items[1].slug).toBe(mockAlias2);
     }
 
     spyCreateRandom.mockRestore();
@@ -98,33 +100,33 @@ describe('Create Short URL', () => {
   it('should not be able to create url short with not authenticated user', async () => {
     const result = await sut.execute({
       originalUrl: 'https://site.com.br',
-      slug: 'my-site',
+      alias: 'my-site',
     });
 
     expect(result.isLeft()).toBe(true);
     expect(result.value).toBeInstanceOf(UserNotAuthenticatedError);
   });
 
-  it('should not be able to create url short with custom slug wrong', async () => {
+  it('should not be able to create url short with custom alias wrong', async () => {
     const result = await sut.execute({
       originalUrl: 'https://site.com.br',
-      slug: 'meu site de apostas',
+      alias: 'meu site de apostas',
       userId: 'user-1',
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(SlugRegexRulesError);
+    expect(result.value).toBeInstanceOf(AliasRegexRulesError);
   });
 
-  it('should not be able to create url short with custom slug reserved', async () => {
+  it('should not be able to create url short with custom alias reserved', async () => {
     const result = await sut.execute({
       originalUrl: 'https://site.com.br',
-      slug: 'auth',
+      alias: 'auth',
       userId: 'user-1',
     });
 
     expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(ReservedPathsSlugError);
+    expect(result.value).toBeInstanceOf(ReservedPathsAliasError);
   });
 
   it('should not be able to create url short with invalid original url', async () => {
