@@ -8,6 +8,7 @@ import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { RegisterUserUseCase } from '@/domain/user/application/use-cases/register-user';
 import { ZodValidationPipe } from '../../pipes/zod-validation-pipe';
 import { UserAlreadyExistsError } from '@/domain/user/application/use-cases/errors/user-already-exists-error';
+import { Public } from '@/infra/auth/public';
 
 const registerBodySchema = z.object({
   email: z.email(),
@@ -17,6 +18,7 @@ const registerBodySchema = z.object({
 type RegisterBodySchema = z.infer<typeof registerBodySchema>;
 
 @Controller('/users')
+@Public()
 export class RegisterController {
   constructor(private registerStudent: RegisterUserUseCase) {}
 

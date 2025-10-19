@@ -7,6 +7,6 @@ export class JwtEncrypter implements Encrypter {
   constructor(private jwtService: JwtService) {}
 
   async encrypt(payload: Record<string, unknown>): Promise<string> {
-    return '';
+    return this.jwtService.signAsync(payload);
   }
 }
