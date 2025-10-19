@@ -1,10 +1,10 @@
 import { InMemoryUrlsRepository } from '@test/repositories/in-memory-urls-repository';
 import { CreateShortUrlUseCase } from './create-short-url';
-import { Slug } from '../../enterprise/value-objects/slug';
+import { Slug } from '../../enterprise/entities/value-objects/slug';
 import { Url } from '../../enterprise/entities/url';
 import { UserNotAuthenticatedError } from './errors/user-not-authenticated-error';
-import { SlugRegexRulesError } from '../../enterprise/value-objects/errors/slug-regex-rules-error';
-import { ReservedPathsSlugError } from '../../enterprise/value-objects/errors/reserved-paths-slug-error';
+import { SlugRegexRulesError } from '../../enterprise/entities/value-objects/errors/slug-regex-rules-error';
+import { ReservedPathsSlugError } from '../../enterprise/entities/value-objects/errors/reserved-paths-slug-error';
 
 let inMemoryUrlsRepository: InMemoryUrlsRepository;
 let sut: CreateShortUrlUseCase;

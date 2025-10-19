@@ -1,12 +1,12 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Url } from '../../enterprise/entities/url';
-import { Slug } from '../../enterprise/value-objects/slug';
+import { Slug } from '../../enterprise/entities/value-objects/slug';
 import { UrlsRepository } from '../repositories/urls-repository';
 import { left, right, type Either } from '@/core/either';
 import { UserNotAuthenticatedError } from './errors/user-not-authenticated-error';
 import { SlugAlreadyExistsError } from './errors/slug-already-exists-error';
-import type { SlugRegexRulesError } from '../../enterprise/value-objects/errors/slug-regex-rules-error';
-import type { ReservedPathsSlugError } from '../../enterprise/value-objects/errors/reserved-paths-slug-error';
+import type { SlugRegexRulesError } from '../../enterprise/entities/value-objects/errors/slug-regex-rules-error';
+import type { ReservedPathsSlugError } from '../../enterprise/entities/value-objects/errors/reserved-paths-slug-error';
 
 interface CreateShortUrlUseCaseRequest {
   userId?: string;

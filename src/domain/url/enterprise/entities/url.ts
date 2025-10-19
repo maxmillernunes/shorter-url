@@ -1,7 +1,7 @@
 import { Entity } from '@/core/entities/entity';
 import type { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
-import { Slug } from '../value-objects/slug';
+import { Slug } from './value-objects/slug';
 import { ACCESS_COUNT } from '@/core/types/constants';
 
 export interface UrlProps {
