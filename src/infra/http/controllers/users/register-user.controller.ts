@@ -15,20 +15,21 @@ const registerBodySchema = z.object({
   password: z.string(),
 });
 
+const bodyValidationPipe = new ZodValidationPipe(registerBodySchema);
+
 type RegisterBodySchema = z.infer<typeof registerBodySchema>;
 
 @Controller('/users')
 @Public()
 export class RegisterController {
-  constructor(private registerStudent: RegisterUserUseCase) {}
+  constructor(private registerUser: RegisterUserUseCase) {}
 
   @Post()
   @HttpCode(201)
-  @UsePipes(new ZodValidationPipe(registerBodySchema))
-  async handle(@Body() body: RegisterBodySchema) {
+  async handle(@Body(bodyValidationPipe) body: RegisterBodySchema) {
     const { email, password } = body;
 
-    const result = await this.registerStudent.execute({
+    const result = await this.registerUser.execute({
       email,
       password,
     });
