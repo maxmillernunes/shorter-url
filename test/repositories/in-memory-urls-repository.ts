@@ -6,7 +6,11 @@ export class InMemoryUrlsRepository implements UrlsRepository {
   public items: Url[] = [];
 
   async findById(id: string): Promise<Url | null> {
-    const url = this.items.find((item) => item.id.toString() === id);
+    const url = this.items.find(
+      (item) =>
+        (item.deletedAt !== undefined || item.deletedAt !== null) &&
+        item.id.toString() === id,
+    );
 
     if (!url) {
       return null;
@@ -16,7 +20,11 @@ export class InMemoryUrlsRepository implements UrlsRepository {
   }
 
   async findBySlug(slug: string): Promise<Url | null> {
-    const url = this.items.find((item) => item.slug.value === slug);
+    const url = this.items.find(
+      (item) =>
+        (item.deletedAt !== undefined || item.deletedAt !== null) &&
+        item.slug.value === slug,
+    );
 
     if (!url) {
       return null;
@@ -30,7 +38,11 @@ export class InMemoryUrlsRepository implements UrlsRepository {
     { page }: PaginationParams,
   ): Promise<Url[]> {
     const url = this.items
-      .filter((item) => item.userId?.toString() === userId)
+      .filter(
+        (item) =>
+          (item.deletedAt !== undefined || item.deletedAt !== null) &&
+          item.userId?.toString() === userId,
+      )
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .slice((page - 1) * 20, page * 20);
 
