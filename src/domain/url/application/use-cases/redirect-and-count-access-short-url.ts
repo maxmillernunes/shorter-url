@@ -1,6 +1,7 @@
 import { left, right, type Either } from '@/core/either';
 import { UrlsRepository } from '../repositories/urls-repository';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import type { OriginalUrl } from '../../enterprise/entities/value-objects/original-url';
 
 interface RedirectAndCountAccessShortUrlUseCaseRequest {
   shortUrl: string;
@@ -8,7 +9,7 @@ interface RedirectAndCountAccessShortUrlUseCaseRequest {
 
 type RedirectAndCountAccessShortUrlUseCaseResponse = Either<
   ResourceNotFoundError,
-  { originalUrl: string }
+  { originalUrl: OriginalUrl }
 >;
 
 export class RedirectAndCountAccessShortUrlUseCase {

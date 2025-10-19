@@ -14,3 +14,5 @@ export const RESERVED_PATHS = new Set([
 ]);
 
 export const ACCESS_COUNT = 1;
+
+export const ORIGINAL_URL_LENGTH = 2048;

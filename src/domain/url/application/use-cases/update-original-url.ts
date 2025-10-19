@@ -2,6 +2,9 @@ import { left, right, type Either } from '@/core/either';
 import { UrlsRepository } from '../repositories/urls-repository';
 import type { Url } from '../../enterprise/entities/url';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { OriginalUrl } from '../../enterprise/entities/value-objects/original-url';
+import { InvalidOriginalUrlError } from '../../enterprise/entities/value-objects/errors/invalid-original-url-error';
+import { OriginalUrlTooLongError } from '../../enterprise/entities/value-objects/errors/original-url-too-long-error';
 
 interface UpdateOriginalUrlUseCaseRequest {
   id: string;
@@ -9,7 +12,7 @@ interface UpdateOriginalUrlUseCaseRequest {
 }
 
 type UpdateOriginalUrlUseCaseResponse = Either<
-  ResourceNotFoundError,
+  ResourceNotFoundError | InvalidOriginalUrlError | OriginalUrlTooLongError,
   { url: Url }
 >;
 
@@ -26,7 +29,13 @@ export class UpdateOriginalUrlUseCase {
       return left(new ResourceNotFoundError());
     }
 
-    url.originalUrl = newOriginalUrl;
+    const newOriginalUrlCreated = OriginalUrl.normalize(newOriginalUrl);
+
+    if (newOriginalUrlCreated.isLeft()) {
+      return left(newOriginalUrlCreated.value);
+    }
+
+    url.originalUrl = newOriginalUrlCreated.value.originalUrl;
 
     await this.urlsRepository.save(url);
 

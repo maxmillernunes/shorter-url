@@ -7,6 +7,9 @@ import { UserNotAuthenticatedError } from './errors/user-not-authenticated-error
 import { SlugAlreadyExistsError } from './errors/slug-already-exists-error';
 import type { SlugRegexRulesError } from '../../enterprise/entities/value-objects/errors/slug-regex-rules-error';
 import type { ReservedPathsSlugError } from '../../enterprise/entities/value-objects/errors/reserved-paths-slug-error';
+import { OriginalUrl } from '../../enterprise/entities/value-objects/original-url';
+import type { InvalidOriginalUrlError } from '../../enterprise/entities/value-objects/errors/invalid-original-url-error';
+import type { OriginalUrlTooLongError } from '../../enterprise/entities/value-objects/errors/original-url-too-long-error';
 
 interface CreateShortUrlUseCaseRequest {
   userId?: string;
@@ -18,7 +21,9 @@ type CreateShortUrlUseCaseResponse = Either<
   | UserNotAuthenticatedError
   | SlugAlreadyExistsError
   | SlugRegexRulesError
-  | ReservedPathsSlugError,
+  | ReservedPathsSlugError
+  | InvalidOriginalUrlError
+  | OriginalUrlTooLongError,
   {
     url: Url;
   }
@@ -62,8 +67,14 @@ export class CreateShortUrlUseCase {
       } while (await this.urlsRepository.findBySlug(slugCreated.value));
     }
 
+    const originalUrlCreated = OriginalUrl.normalize(originalUrl);
+
+    if (originalUrlCreated.isLeft()) {
+      return left(originalUrlCreated.value);
+    }
+
     const url = Url.create({
-      originalUrl,
+      originalUrl: originalUrlCreated.value.originalUrl,
       slug: slugCreated,
       userId: userId ? new UniqueEntityId(userId) : null,
     });

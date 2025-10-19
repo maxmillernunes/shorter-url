@@ -3,10 +3,11 @@ import type { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
 import { Slug } from './value-objects/slug';
 import { ACCESS_COUNT } from '@/core/types/constants';
+import { OriginalUrl } from './value-objects/original-url';
 
 export interface UrlProps {
   userId?: UniqueEntityId | null;
-  originalUrl: string;
+  originalUrl: OriginalUrl;
   slug: Slug;
   accessCounter?: number | null;
   createdAt: Date;
@@ -47,7 +48,7 @@ export class Url extends Entity<UrlProps> {
     this.props.updateAt = new Date();
   }
 
-  set originalUrl(originalUrl: string) {
+  set originalUrl(originalUrl: OriginalUrl) {
     this.props.originalUrl = originalUrl;
 
     this.touch();
