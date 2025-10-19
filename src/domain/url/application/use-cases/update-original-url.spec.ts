@@ -5,6 +5,7 @@ import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-e
 import { InvalidOriginalUrlError } from '../../enterprise/entities/value-objects/errors/invalid-original-url-error';
 import { ORIGINAL_URL_LENGTH } from '@/core/types/constants';
 import { OriginalUrlTooLongError } from '../../enterprise/entities/value-objects/errors/original-url-too-long-error';
+import { OriginalUrl } from '../../enterprise/entities/value-objects/original-url';
 
 let inMemoryUrlsRepository: InMemoryUrlsRepository;
 let sut: UpdateOriginalUrlUseCase;
@@ -29,6 +30,7 @@ describe('Update Original URL', () => {
     expect(result.isRight()).toBeTruthy();
 
     if (result.isRight()) {
+      expect(result.value.url.originalUrl).toBeInstanceOf(OriginalUrl);
       expect(result.value.url.originalUrl.value).toEqual(newOriginalUrl);
     }
   });

@@ -27,6 +27,7 @@ describe('Create Short URL', () => {
     expect(result.isRight()).toBeTruthy();
 
     if (result.isRight()) {
+      expect(result.value.url.slug).toBeInstanceOf(Slug);
       expect(result.value.url.slug.value).toEqual(expect.any(String));
       expect(inMemoryUrlsRepository.items[0]).toEqual(result.value.url);
     }
@@ -41,6 +42,7 @@ describe('Create Short URL', () => {
 
     expect(result.isRight()).toBeTruthy();
     if (result.isRight()) {
+      expect(result.value.url.slug).toBeInstanceOf(Slug);
       expect(result.value.url.slug.value).toEqual('my-site');
       expect(inMemoryUrlsRepository.items[0]).toEqual(result.value.url);
     }
@@ -55,6 +57,7 @@ describe('Create Short URL', () => {
 
     expect(result.isRight()).toBeTruthy();
     if (result.isRight()) {
+      expect(result.value.url.originalUrl).toBeInstanceOf(OriginalUrl);
       expect(result.value.url.slug.value).toEqual('my-site');
       expect(inMemoryUrlsRepository.items[0].originalUrl.value).toEqual(
         'https://site.com.br',
@@ -82,6 +85,8 @@ describe('Create Short URL', () => {
     });
 
     if (result.isRight()) {
+      expect(result.value.url.slug).toBeInstanceOf(Slug);
+      expect(result.value.url.originalUrl).toBeInstanceOf(OriginalUrl);
       expect(result.value.url.slug.value).toBe(mockSlug2.value);
       expect(spyCreateRandom).toHaveBeenCalledTimes(2);
       expect(inMemoryUrlsRepository.items[1].slug).toBe(mockSlug2);
