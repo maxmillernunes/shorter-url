@@ -1,6 +1,7 @@
 import { right, type Either } from '@/core/either';
 import { UrlsRepository } from '../repositories/urls-repository';
 import type { Url } from '../../enterprise/entities/url';
+import { Injectable } from '@nestjs/common';
 
 interface FetchUrlsByUserIdUseCaseRequest {
   page: number;
@@ -9,6 +10,7 @@ interface FetchUrlsByUserIdUseCaseRequest {
 
 type FetchUrlsByUserIdUseCaseResponse = Either<null, { urls: Url[] }>;
 
+@Injectable()
 export class FetchUrlsByUserIdUseCase {
   constructor(private urlsRepository: UrlsRepository) {}
 
