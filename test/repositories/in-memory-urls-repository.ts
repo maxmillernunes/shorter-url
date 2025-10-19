@@ -1,3 +1,4 @@
+import type { PaginationParams } from '@/core/repositories/pagination-params';
 import type { UrlsRepository } from '@/domain/url/application/repositories/urls-repository';
 import type { Url } from '@/domain/url/enterprise/entities/url';
 
@@ -24,8 +25,14 @@ export class InMemoryUrlsRepository implements UrlsRepository {
     return url;
   }
 
-  async findManyByUserId(userId: string): Promise<Url[]> {
-    const url = this.items.filter((item) => item.userId?.toString() === userId);
+  async findManyByUserId(
+    userId: string,
+    { page }: PaginationParams,
+  ): Promise<Url[]> {
+    const url = this.items
+      .filter((item) => item.userId?.toString() === userId)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice((page - 1) * 20, page * 20);
 
     return url;
   }
