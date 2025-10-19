@@ -1,5 +1,13 @@
-import { CUSTOM_ALIAS_REGEX, RESERVED_PATHS } from '@/core/types/constants';
 import { randomInt } from 'node:crypto';
+import { left, right, type Either } from '@/core/either';
+import { CUSTOM_ALIAS_REGEX, RESERVED_PATHS } from '@/core/types/constants';
+import { SlugRegexRulesError } from './errors/slug-regex-rules-error';
+import { ReservedPathsSlugError } from './errors/reserved-paths-slug-error';
+
+export type CreateCustomSlug = Either<
+  SlugRegexRulesError | ReservedPathsSlugError,
+  { slug: Slug }
+>;
 
 export class Slug {
   public value: string;
@@ -12,20 +20,18 @@ export class Slug {
     return new Slug(value);
   }
 
-  static createCustom(text: string) {
+  static createCustom(text: string): CreateCustomSlug {
     if (!CUSTOM_ALIAS_REGEX.test(text)) {
-      throw new Error(
-        'Short url invalid: use 3–30 characters alpha numeric separated with (-). Ex: my-site.',
-      );
+      return left(new SlugRegexRulesError());
     }
 
     const alias = text.toLowerCase();
 
     if (RESERVED_PATHS.has(alias)) {
-      throw new Error('Short invalid');
+      return left(new ReservedPathsSlugError());
     }
 
-    return new Slug(alias);
+    return right({ slug: new Slug(alias) });
   }
 
   /**
