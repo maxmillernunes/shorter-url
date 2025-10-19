@@ -1,6 +1,7 @@
 import { left, right, type Either } from '@/core/either';
 import { UrlsRepository } from '../repositories/urls-repository';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { Injectable } from '@nestjs/common';
 
 interface DeleteShortUrlUseCaseRequest {
   id: string;
@@ -8,6 +9,7 @@ interface DeleteShortUrlUseCaseRequest {
 
 type DeleteShortUrlUseCaseResponse = Either<ResourceNotFoundError, null>;
 
+@Injectable()
 export class DeleteShortUrlUseCase {
   constructor(private urlsRepository: UrlsRepository) {}
 

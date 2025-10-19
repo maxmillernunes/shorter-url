@@ -43,12 +43,6 @@ export class CreateShortUrlController {
     const userId = user?.sub;
     const { alias, originalUrl } = body;
 
-    console.log({
-      userId,
-      alias,
-      originalUrl,
-    });
-
     const result = await this.createShortUrl.execute({
       userId,
       alias,

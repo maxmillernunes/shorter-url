@@ -5,6 +5,7 @@ import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-e
 import { OriginalUrl } from '../../enterprise/entities/value-objects/original-url';
 import { InvalidOriginalUrlError } from '../../enterprise/entities/value-objects/errors/invalid-original-url-error';
 import { OriginalUrlTooLongError } from '../../enterprise/entities/value-objects/errors/original-url-too-long-error';
+import { Injectable } from '@nestjs/common';
 
 interface UpdateOriginalUrlUseCaseRequest {
   id: string;
@@ -16,6 +17,7 @@ type UpdateOriginalUrlUseCaseResponse = Either<
   { url: Url }
 >;
 
+@Injectable()
 export class UpdateOriginalUrlUseCase {
   constructor(private urlsRepository: UrlsRepository) {}
 

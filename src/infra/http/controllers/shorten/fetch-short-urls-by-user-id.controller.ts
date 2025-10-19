@@ -21,6 +21,7 @@ export class FetchShortUrlsByUserIdController {
   constructor(private fetchShortUrlsByUserId: FetchUrlsByUserIdUseCase) {}
 
   @Get()
+  @HttpCode(200)
   async handle(
     @Query('page', QueryValidationPipe) page: PageQueryParamSchema,
     @CurrentUser() user: UserPayload,

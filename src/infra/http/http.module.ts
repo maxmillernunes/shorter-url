@@ -9,6 +9,10 @@ import { CreateShortUrlController } from './controllers/shorten/create-shorten-u
 import { CreateShortUrlUseCase } from '@/domain/url/application/use-cases/create-short-url';
 import { FetchShortUrlsByUserIdController } from './controllers/shorten/fetch-short-urls-by-user-id.controller';
 import { FetchUrlsByUserIdUseCase } from '@/domain/url/application/use-cases/fetch-urls-by-user-id';
+import { UpdateOriginalUrlController } from './controllers/shorten/update-original-url.controller';
+import { UpdateOriginalUrlUseCase } from '@/domain/url/application/use-cases/update-original-url';
+import { DeleteShortUrlController } from './controllers/shorten/delete-short-url.controller';
+import { DeleteShortUrlUseCase } from '@/domain/url/application/use-cases/delete-short-url';
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -17,12 +21,16 @@ import { FetchUrlsByUserIdUseCase } from '@/domain/url/application/use-cases/fet
     AuthenticateController,
     CreateShortUrlController,
     FetchShortUrlsByUserIdController,
+    UpdateOriginalUrlController,
+    DeleteShortUrlController,
   ],
   providers: [
     RegisterUserUseCase,
     AuthenticateUserUseCase,
     CreateShortUrlUseCase,
     FetchUrlsByUserIdUseCase,
+    UpdateOriginalUrlUseCase,
+    DeleteShortUrlUseCase,
   ],
 })
 export class HttpModule {}

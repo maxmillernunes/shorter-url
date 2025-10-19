@@ -22,6 +22,7 @@ export class PrismaUrlsRepository implements UrlsRepository {
   async findBySlug(slug: string): Promise<Url | null> {
     const url = await this.prisma.shortUrl.findUnique({
       where: {
+        deletedAt: null,
         slug: slug,
       },
     });
@@ -34,7 +35,9 @@ export class PrismaUrlsRepository implements UrlsRepository {
   }
 
   async findByAlias(alias: string): Promise<Url | null> {
-    const url = await this.prisma.shortUrl.findUnique({ where: { alias } });
+    const url = await this.prisma.shortUrl.findUnique({
+      where: { deletedAt: null, alias },
+    });
 
     if (!url) {
       return null;
@@ -49,6 +52,7 @@ export class PrismaUrlsRepository implements UrlsRepository {
   ): Promise<Url[]> {
     const urls = await this.prisma.shortUrl.findMany({
       where: {
+        deletedAt: null,
         userId,
       },
       orderBy: { createdAt: 'desc' },
