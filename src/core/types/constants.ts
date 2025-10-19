@@ -12,3 +12,5 @@ export const RESERVED_PATHS = new Set([
   'status',
   'shorten',
 ]);
+
+export const ACCESS_COUNT = 1;

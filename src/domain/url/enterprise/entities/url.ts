@@ -2,12 +2,13 @@ import { Entity } from '@/core/entities/entity';
 import type { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
 import { Slug } from '../value-objects/slug';
+import { ACCESS_COUNT } from '@/core/types/constants';
 
 export interface UrlProps {
   userId?: UniqueEntityId | null;
   originalUrl: string;
   slug: Slug;
-  accessCounter?: number;
+  accessCounter?: number | null;
   createdAt: Date;
   updateAt?: Date | null;
   deletedAt?: Date | null;
@@ -24,6 +25,10 @@ export class Url extends Entity<UrlProps> {
 
   get slug() {
     return this.props.slug;
+  }
+
+  get accessCounter(): number | null | undefined {
+    return this.props.accessCounter;
   }
 
   get createdAt() {
@@ -50,6 +55,19 @@ export class Url extends Entity<UrlProps> {
 
   set deletedAt(deletedAt: Date) {
     this.props.deletedAt = deletedAt;
+
+    this.touch();
+  }
+
+  public incrementRedirect(): void {
+    if (
+      this.props.accessCounter === undefined ||
+      this.props.accessCounter === null
+    ) {
+      this.props.accessCounter = ACCESS_COUNT;
+    } else {
+      this.props.accessCounter = this.props.accessCounter + ACCESS_COUNT;
+    }
 
     this.touch();
   }

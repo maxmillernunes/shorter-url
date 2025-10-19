@@ -1,5 +1,4 @@
 import { InMemoryUrlsRepository } from '@test/repositories/in-memory-urls-repository';
-import { CreateShortUrlUseCase } from './create-short-url';
 import { makeUrl } from '@test/factories/make-short-url';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { FetchUrlsByUserIdUseCase } from './fetch-urls-by-user-id';
@@ -7,13 +6,13 @@ import { FetchUrlsByUserIdUseCase } from './fetch-urls-by-user-id';
 let inMemoryUrlsRepository: InMemoryUrlsRepository;
 let sut: FetchUrlsByUserIdUseCase;
 
-describe('Create Short URL', () => {
+describe('Fetch Urls By User Id', () => {
   beforeEach(() => {
     inMemoryUrlsRepository = new InMemoryUrlsRepository();
     sut = new FetchUrlsByUserIdUseCase(inMemoryUrlsRepository);
   });
 
-  it('should be able to create url short', async () => {
+  it('should be able to fetch urls by user id', async () => {
     const userId = new UniqueEntityId('user-1');
 
     inMemoryUrlsRepository.create(
@@ -45,7 +44,7 @@ describe('Create Short URL', () => {
     }
   });
 
-  it('should be able to create url short with pagination', async () => {
+  it('should be able to fetch urls by user id paginated', async () => {
     const userId = new UniqueEntityId('user-1');
 
     for (let i = 1; i <= 22; i++) {
