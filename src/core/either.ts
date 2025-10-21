@@ -2,18 +2,18 @@
  * Left return error
  */
 export class Left<L, R> {
-  readonly value: L
+  readonly value: L;
 
   constructor(value: L) {
-    this.value = value
+    this.value = value;
   }
 
   isRight(): this is Right<L, R> {
-    return false
+    return false;
   }
 
   isLeft(): this is Left<L, R> {
-    return true
+    return true;
   }
 }
 
@@ -21,27 +21,27 @@ export class Left<L, R> {
  * Right return success
  */
 export class Right<L, R> {
-  readonly value: R
+  readonly value: R;
 
   constructor(value: R) {
-    this.value = value
+    this.value = value;
   }
 
   isRight(): this is Right<L, R> {
-    return true
+    return true;
   }
 
   isLeft(): this is Left<L, R> {
-    return false
+    return false;
   }
 }
 
-export type Either<L, R> = Left<L, R> | Right<L, R>
+export type Either<L, R> = Left<L, R> | Right<L, R>;
 
 export const left = <L, R>(value: L): Either<L, R> => {
-  return new Left(value)
-}
+  return new Left(value);
+};
 
 export const right = <L, R>(value: R): Either<L, R> => {
-  return new Right(value)
-}
+  return new Right(value);
+};

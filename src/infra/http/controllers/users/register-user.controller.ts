@@ -1,9 +1,5 @@
 import { z } from 'zod';
-import {
-  BadRequestException,
-  ConflictException,
-  UsePipes,
-} from '@nestjs/common';
+import { BadRequestException, ConflictException } from '@nestjs/common';
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { RegisterUserUseCase } from '@/domain/user/application/use-cases/register-user';
 import { ZodValidationPipe } from '../../pipes/zod-validation-pipe';

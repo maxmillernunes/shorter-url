@@ -4,7 +4,6 @@ import {
   Controller,
   Post,
   UnauthorizedException,
-  UsePipes,
 } from '@nestjs/common';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
 import z from 'zod';
