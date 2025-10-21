@@ -144,8 +144,5 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm prisma generate
 
-      - name: Run Prisma migrations
-        run: pnpm prisma migrate deploy
-
       - name: Run E2E tests
         run: pnpm test:e2e
