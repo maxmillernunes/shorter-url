@@ -1,35 +1,38 @@
 services:
   api:
-    container_name: url-shortener-api
+    container_name: url-shortener-api-dev
     build:
       context: .
-      target: prod
+      target: dev
     ports:
       - ${PORT}:${PORT}
     env_file:
-      - .env
+      - .env.development
     depends_on:
       - postgres
     restart: unless-stopped
+    volumes:
+      - .:/app
+      - /app/node_modules
     networks:
-      - app-network
+      - app-network-dev
 
   postgres:
-    container_name: url-shortener-db
+    container_name: url-shortener-db-dev
     image: bitnami/postgresql
     restart: unless-stopped
     env_file:
-      - .env
+      - .env.development
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
-      - pgdata-prod:/var/lib/postgresql/data
+      - pgdata-dev:/var/lib/postgresql/data
     networks:
-      - app-network
+      - app-network-dev
 
 volumes:
-  pgdata-prod:
+  pgdata-dev:
 
 networks:
-  app-network:
+  app-network-dev:
     driver: bridge
