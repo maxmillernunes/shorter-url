@@ -14,7 +14,7 @@ export class PrismaShortUrlMapper {
         slug: Slug.create(raw.slug),
         alias: raw.alias ? Alias.create(raw.alias) : null,
         originalUrl: OriginalUrl.create(raw.originalUrl),
-        accessCounter: raw.accessCounter ?? 0, // evita undefined
+        accessCounter: raw.accessCounter ?? 0,
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
         deletedAt: raw.deletedAt ?? null,
@@ -26,7 +26,7 @@ export class PrismaShortUrlMapper {
   static toPrisma(url: Url): Prisma.ShortUrlUncheckedCreateInput {
     return {
       id: url.id.toString(),
-      userId: url.userId?.toString() ?? undefined, // deixa explícito undefined quando null
+      userId: url.userId?.toString() ?? undefined,
       slug: url.slug.value,
       alias: url.alias?.value ?? undefined,
       originalUrl: url.originalUrl.value,
