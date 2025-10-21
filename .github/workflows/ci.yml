@@ -116,8 +116,8 @@ jobs:
       POSTGRES_PASSWORD: testpassword
       POSTGRES_DB: testdb
       DATABASE_URL: postgres://testuser:testpassword@localhost:5432/testdb
-      ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
-      REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+      JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
+      JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
 
     steps:
       - name: Checkout repository
