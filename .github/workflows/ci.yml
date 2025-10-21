@@ -144,5 +144,13 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm prisma generate
 
+        name: Fix JWT secrets (remove trailing newlines)
+        run: |
+          echo "$JWT_PRIVATE_KEY" | tr -d '\n' > private.b64
+          echo "$JWT_PUBLIC_KEY" | tr -d '\n' > public.b64
+          export JWT_PRIVATE_KEY=$(cat private.b64)
+          export JWT_PUBLIC_KEY=$(cat public.b64)
+          echo "✅ Secrets sanitized"
+
       - name: Run E2E tests
         run: pnpm test:e2e
