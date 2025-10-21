@@ -4,7 +4,10 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default [
-  // Base recommended configs
+  {
+    ignores: ['test/**', '**/*.spec.ts'], // ✅ aqui usamos "ignores"
+  },
+
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   eslintPluginPrettierRecommended,
@@ -13,9 +16,9 @@ export default [
     languageOptions: {
       globals: {
         ...globals.node,
-        ...globals.jest, // Jest globals for tests
+        ...globals.jest,
       },
-      sourceType: 'module', // modern ES modules
+      sourceType: 'module',
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
@@ -31,9 +34,6 @@ export default [
       '@typescript-eslint/unbound-method': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
     },
-
-    // Ignore test files globally
-    ignorePatterns: ['**/*.spec.ts', '**/test/**'],
 
     // Overrides for specific folders or files
     overrides: [
