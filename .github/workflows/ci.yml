@@ -112,38 +112,31 @@ jobs:
           --health-retries 5
 
     env:
-      POSTGRES_USER: testuser
-      POSTGRES_PASSWORD: testpassword
-      POSTGRES_DB: testdb
-      DATABASE_URL: postgres://testuser:testpassword@localhost:5432/testdb
-      # JWT em Base64, decodificado no código
+      DATABASE_URL: postgres://testuser:testpassword@postgres:5432/testdb
       JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
       JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
+      NODE_ENV: test
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Setup pnpm
-        run: corepack enable && corepack prepare pnpm@latest --activate
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Build Docker image
+        run: docker build -t myapp:test .
 
       - name: Wait for Postgres to be ready
         run: |
-          until pg_isready -h localhost -p 5432 -U $POSTGRES_USER; do
+          until pg_isready -h postgres -p 5432 -U testuser; do
             echo "Waiting for Postgres..."
             sleep 2
           done
 
-      - name: Generate Prisma Client
-        run: pnpm prisma generate
-
-      - name: Run E2E tests
-        run: pnpm test:e2e
+      - name: Run E2E tests inside container
+        run: |
+          docker run --rm \
+            --network host \
+            -e DATABASE_URL=$DATABASE_URL \
+            -e JWT_PRIVATE_KEY="$JWT_PRIVATE_KEY" \
+            -e JWT_PUBLIC_KEY="$JWT_PUBLIC_KEY" \
+            -e NODE_ENV=test \
+            myapp:test pnpm test:e2e
