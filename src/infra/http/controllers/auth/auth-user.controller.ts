@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
-import z, { string } from 'zod';
+import z from 'zod';
 import { Public } from '@/infra/auth/public';
 import { AuthenticateUserUseCase } from '@/domain/user/application/use-cases/authenticate-user';
 import { WrongCredentialsError } from '@/domain/user/application/use-cases/errors/wrong-credentials-error';
