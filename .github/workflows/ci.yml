@@ -115,7 +115,7 @@ jobs:
       POSTGRES_USER: testuser
       POSTGRES_PASSWORD: testpassword
       POSTGRES_DB: testdb
-      DATABASE_URL: postgres://testuser:testpassword@postgres:5432/testdb
+      DATABASE_URL: postgres://testuser:testpassword@localhost:5432/testdb
       # JWT em Base64, decodificado no código
       JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
       JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
