@@ -100,7 +100,7 @@ pnpm run test:e2e
 
 ## Diagrama de Arquitetura
 
-- [Diagrama de Arquitetura (Lucidchart)](https://lucid.app/lucidchart/545ef74c-7a2a-40ae-897e-2c4c1b9561d3)
+- [Diagrama de Arquitetura (Lucidchart)](https://lucid.app/lucidchart/545ef74c-7a2a-40ae-897e-2c4c1b9561d3/edit?viewport_loc=202%2C570%2C1727%2C915%2C0_0&invitationId=inv_334c27fa-8d89-4f06-8d08-7fe5d0c73fb0)
 
 ## Escalabilidade
 
