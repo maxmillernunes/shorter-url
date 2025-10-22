@@ -38,6 +38,7 @@ RUN chmod +x entrypoint.sh
 
 EXPOSE 3333
 
+ENTRYPOINT ["sh", "./entrypoint.sh"]
 CMD ["pnpm", "start:dev"]
 
 # ------------------- Production -------------------

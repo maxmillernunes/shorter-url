@@ -115,7 +115,8 @@ jobs:
       POSTGRES_USER: testuser
       POSTGRES_PASSWORD: testpassword
       POSTGRES_DB: testdb
-      DATABASE_URL: postgres://testuser:testpassword@localhost:5432/testdb
+      DATABASE_URL: postgres://testuser:testpassword@postgres:5432/testdb
+      # JWT em Base64, decodificado no código
       JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
       JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
 
@@ -136,22 +137,13 @@ jobs:
 
       - name: Wait for Postgres to be ready
         run: |
-          until pg_isready -h localhost -p 5432 -U $POSTGRES_USER; do
-            echo "Waiting for postgres..."
+          until pg_isready -h postgres -p 5432 -U $POSTGRES_USER; do
+            echo "Waiting for Postgres..."
             sleep 2
           done
 
       - name: Generate Prisma Client
         run: pnpm prisma generate
-
-      - name: Fix JWT secrets (remove trailing newlines)
-        run: |
-          echo "$JWT_PRIVATE_KEY" | tr -d '\n' > private.b64
-          echo "$JWT_PUBLIC_KEY" | tr -d '\n' > public.b64
-          export JWT_PRIVATE_KEY=$(cat private.b64)
-          export JWT_PUBLIC_KEY=$(cat public.b64)
-          echo "✅ Secrets sanitized"
-
 
       - name: Run E2E tests
         run: pnpm test:e2e
