@@ -1,98 +1,115 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# shorter-url
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API RESTful para encurtamento de URLs com autenticação, CRUD, contagem de acessos, soft delete e documentação, construída com Node.js e NestJS.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Descrição
 
-## Description
+Este projeto implementa um sistema de encurtamento de URLs que permite a criação de links encurtados com código único de 6 caracteres, associando URLs a usuários autenticados, e contabilizando acessos a cada link. Inclui autenticação via JWT, operações CRUD para URLs, soft delete, testes unitários com Jest, ambiente local via Docker e documentação Swagger.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tecnologias Usadas
 
-## Project setup
+- Node.js (NestJS, última versão LTS)
+- PostgreSQL (configurável via Docker)
+- JWT para autenticação
+- Docker e Docker Compose para ambiente local
+- Jest para testes unitários
+- Swagger/OpenAPI para documentação da API
+- TypeScript
 
-```bash
-$ pnpm install
+## Funcionalidades
+
+- Cadastro e autenticação de usuários via e-mail/senha com JWT
+- Encurtamento de URLs com slug fixo de 6 caracteres (case-sensitive), com e sem autenticação
+- Permite criação de alias customizados únicos (3 a 30 caracteres, letras, números, - e _)
+- URLs autenticadas associadas ao usuário proprietário
+- Usuário pode listar, atualizar e apagar seus próprios links (soft delete)
+- Contabilização de acessos para cada URL
+- Soft delete via campo `deletedAt`
+- Timestamps de criação e atualização
+
+## Instalação e Execução
+
+1. Clone o repositório:
+
+```
+git clone https://github.com/maxmillernunes/shorter-url.git
+cd shorter-url
 ```
 
-## Compile and run the project
+2. Configure as variáveis de ambiente conforme `.env.example`.
+- Não esqueça de gerar o par de chaves publica e privada.
+- - Passo 1: Gerar chave privada RSA 256 bits
+    ```
+    openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048
+    ```
 
-```bash
-# development
-$ pnpm run start
+- - Passo 2: Extrair a chave pública a partir da privada
+    ```
+    openssl rsa -pubout -in private_key.pem -out public_key.pem
+    ```
 
-# watch mode
-$ pnpm run start:dev
+- - Passo 3: Converter a chave privada para base64 (sem cabeçalhos)
+    ```
+    openssl base64 -A -in private_key.pem -out private_key_base64.txt
+    ```
 
-# production mode
-$ pnpm run start:prod
+- - Passo 4: Converter a chave pública para base64 (sem cabeçalhos)
+    ```
+    openssl base64 -A -in public_key.pem -out public_key_base64.txt
+    ```
+
+3. Execute com Docker Compose:
+
+```
+docker-compose up --build
 ```
 
-## Run tests
+3. Execute com Docker Compose para desenvolvimento com hot reload:
 
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+```
+docker-compose -f docker-compose.dev.yml up --build
 ```
 
-## Deployment
+4. A API estará disponível em `http://localhost:3333`.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## Uso da API
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- **Login:** POST `/auth/login` com e-mail e senha para receber token Bearer.
+- **Encurtar URL:** POST `/shorten` com URL original e opcional alias customizado (autenticado para alias).
+- **Listar URLs:** GET `/my-urls` (autenticado).
+- **Atualizar URL:** PUT `/my-urls/:id` (autenticado).
+- **Excluir URL:** DELETE `/my-urls/:id` (soft delete, autenticado).
+- **Redirecionamento:** GET `/:short` para redirecionar e contar acessos.
 
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+Consulte a documentação Swagger em `http://localhost:3333/docs`.
+
+## Testes
+
+Execute os testes unitários com:
+
+```
+pnpm run test
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Execute os testes E2E:
+- Antes, altera a seguinte env  `POSTGRES_HOST=postgres` para `POSTGRES_HOST=localhost`, pois essa env esta configurada para dentro do container.
+- Depois execute:
+```
+pnpm run test:e2e
+```
 
-## Resources
+## Diagrama de Arquitetura
 
-Check out a few resources that may come in handy when working with NestJS:
+- [Diagrama de Arquitetura (Lucidchart)](https://lucid.app/lucidchart/545ef74c-7a2a-40ae-897e-2c4c1b9561d3)
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Escalabilidade
 
-## Support
+Para escalabilidade em produção, o sistema pode ser replicado horizontalmente atrás de um balanceador de carga, permitindo múltiplas instâncias do serviço API NestJS. O banco relacional pode ser escalado verticalmente, porém assim poderíamos ter problema caso o banco venha a ficar indisponível. Sendo assim o ideal utilizar réplicas para leitura (Master e Slave). Para o contador de acessos, uma solução pode ser a utilização de sistemas de cache distribuído (ex: Redis) e processamento assíncrono para evitar bloqueios no banco, Mais detalhes no diagrama de arquitetura.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Licença
 
-## Stay in touch
+MIT License
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Qualquer dúvida para ajustes ou melhorias, fique à vontade para pedir.
