@@ -34,6 +34,21 @@ export class PrismaUrlsRepository implements UrlsRepository {
     return PrismaShortUrlMapper.toDomain(url);
   }
 
+  async findBySlugOrAlias(shortCode: string): Promise<Url | null> {
+    const url = await this.prisma.shortUrl.findFirst({
+      where: {
+        deletedAt: null,
+        OR: [{ slug: shortCode }, { alias: shortCode }],
+      },
+    });
+
+    if (!url) {
+      return null;
+    }
+
+    return PrismaShortUrlMapper.toDomain(url);
+  }
+
   async findByAlias(alias: string): Promise<Url | null> {
     const url = await this.prisma.shortUrl.findUnique({
       where: { deletedAt: null, alias },

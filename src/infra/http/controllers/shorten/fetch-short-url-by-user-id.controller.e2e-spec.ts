@@ -40,7 +40,7 @@ describe('Fetch Short URL By User By ID (E2E)', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
-      shortUrls: expect.arrayContaining([
+      short_urls: expect.arrayContaining([
         expect.objectContaining({
           originalUrl: url.originalUrl.value,
         }),

@@ -15,9 +15,10 @@ import { DeleteShortUrlController } from './controllers/shorten/delete-short-url
 import { DeleteShortUrlUseCase } from '@/domain/url/application/use-cases/delete-short-url';
 import { RedirectAndCountAccessController } from './controllers/shorten/redirect-and-count-access.controller';
 import { RedirectAndCountAccessShortUrlUseCase } from '@/domain/url/application/use-cases/redirect-and-count-access-short-url';
+import { EnvModule } from '../env/env.module';
 
 @Module({
-  imports: [DatabaseModule, CryptographyModule],
+  imports: [DatabaseModule, CryptographyModule, EnvModule],
   controllers: [
     RegisterController,
     AuthenticateController,

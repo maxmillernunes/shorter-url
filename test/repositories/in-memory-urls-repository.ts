@@ -33,6 +33,21 @@ export class InMemoryUrlsRepository implements UrlsRepository {
     return url;
   }
 
+  async findBySlugOrAlias(text: string): Promise<Url | null> {
+    const url = this.items.find(
+      (item) =>
+        ((item.deletedAt !== undefined || item.deletedAt !== null) &&
+          item.slug.value === text) ||
+        item.alias?.value === text,
+    );
+
+    if (!url) {
+      return null;
+    }
+
+    return url;
+  }
+
   async findByAlias(alias: string): Promise<Url | null> {
     const url = this.items.find(
       (item) =>

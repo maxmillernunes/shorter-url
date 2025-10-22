@@ -11,7 +11,9 @@ import { RedirectAndCountAccessShortUrlUseCase } from '@/domain/url/application/
 import type { Response } from 'express';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { Public } from '@/infra/auth/public';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('shorten')
 @Controller('/:short')
 @Public()
 export class RedirectAndCountAccessController {
@@ -20,6 +22,13 @@ export class RedirectAndCountAccessController {
   ) {}
 
   @Get()
+  @ApiOperation({
+    summary: 'Redirect from original url',
+    description: 'Redirect the original url',
+  })
+  @ApiResponse({
+    status: 302,
+  })
   @HttpCode(302)
   async handle(@Param('short') short: string, @Res() res: Response) {
     const result = await this.redirectAndCountAccess.execute({

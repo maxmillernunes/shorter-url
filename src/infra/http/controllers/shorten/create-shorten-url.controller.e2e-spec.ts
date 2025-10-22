@@ -38,7 +38,7 @@ describe('Create Shorten URL (E2E)', () => {
         alias: 'localhost',
       });
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(200);
   });
 
   test('[POST] /shorten => Without Auth', async () => {
@@ -46,6 +46,6 @@ describe('Create Shorten URL (E2E)', () => {
       originalUrl: 'http://localhost:3333',
     });
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(200);
   });
 });

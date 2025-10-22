@@ -20,7 +20,7 @@ export class RedirectAndCountAccessShortUrlUseCase {
   async execute({
     shortUrl,
   }: RedirectAndCountAccessShortUrlUseCaseRequest): Promise<RedirectAndCountAccessShortUrlUseCaseResponse> {
-    const url = await this.urlsRepository.findBySlug(shortUrl);
+    const url = await this.urlsRepository.findBySlugOrAlias(shortUrl);
 
     if (!url) {
       return left(new ResourceNotFoundError());
