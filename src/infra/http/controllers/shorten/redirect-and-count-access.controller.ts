@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Controller,
   Get,
   HttpCode,
@@ -9,9 +8,9 @@ import {
 } from '@nestjs/common';
 import { RedirectAndCountAccessShortUrlUseCase } from '@/domain/url/application/use-cases/redirect-and-count-access-short-url';
 import type { Response } from 'express';
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { Public } from '@/infra/auth/public';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ResponseResourceNotFoundError } from './errors/shorten-errors-schema';
 
 @ApiTags('shorten')
 @Controller('/:short')
@@ -28,6 +27,11 @@ export class RedirectAndCountAccessController {
   })
   @ApiResponse({
     status: 302,
+    description: 'Redirected',
+  })
+  @ApiResponse({
+    status: 404,
+    type: ResponseResourceNotFoundError,
   })
   @HttpCode(302)
   async handle(@Param('short') short: string, @Res() res: Response) {
@@ -38,13 +42,7 @@ export class RedirectAndCountAccessController {
     if (result.isLeft()) {
       const error = result.value;
 
-      switch (error.constructor) {
-        case ResourceNotFoundError:
-          throw new NotFoundException(error.message);
-
-        default:
-          throw new BadRequestException(error.message);
-      }
+      throw new NotFoundException(error.message);
     }
 
     const originalUrl = result.value.originalUrl.value;

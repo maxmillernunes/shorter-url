@@ -11,7 +11,7 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
-    # Volumes para hot reload
+    # Volumes to hot reload
     volumes:
       - ./src:/app/src
       - ./prisma:/app/prisma
@@ -19,7 +19,6 @@ services:
       - ./pnpm-lock.yaml:/app/pnpm-lock.yaml
       - ./entrypoint.sh:/app/entrypoint.sh:cached
       - /app/node_modules
-    # ⚡ Força o entrypoint via shell
     entrypoint: ["sh", "/app/entrypoint.sh"]
     command: ["pnpm", "start:dev"]
     networks:

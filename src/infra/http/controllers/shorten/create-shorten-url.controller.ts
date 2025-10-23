@@ -14,21 +14,27 @@ import { CurrentUser } from '@/infra/auth/current-user-decorator';
 import type { UserPayload } from '@/infra/auth/jwt.strategy';
 import { UserNotAuthenticatedError } from '@/domain/url/application/use-cases/errors/user-not-authenticated-error';
 import { SlugAlreadyExistsError } from '@/domain/url/application/use-cases/errors/slug-already-exists-error';
-import { AliasRegexRulesError } from '@/domain/url/enterprise/entities/value-objects/errors/alias-regex-rules-error';
-import { ReservedPathsAliasError } from '@/domain/url/enterprise/entities/value-objects/errors/reserved-paths-alias-error';
-import { InvalidOriginalUrlError } from '@/domain/url/enterprise/entities/value-objects/errors/invalid-original-url-error';
-import { OriginalUrlTooLongError } from '@/domain/url/enterprise/entities/value-objects/errors/original-url-too-long-error';
 import { OptionalAuth } from '@/infra/auth/optional-auth';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiExtraModels,
   ApiOperation,
   ApiResponse,
   ApiTags,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { createZodDto } from 'nestjs-zod';
 import { EnvService } from '@/infra/env/env.service';
 import { UrlPresenter } from '../../presenters/url-presenter';
+import {
+  ResponseAliasRegexRulesError,
+  ResponseInvalidOriginalUrlError,
+  ResponseOriginalUrlTooLongError,
+  ResponseReservedPathsAliasError,
+  ResponseSlugAlreadyExistsError,
+  ResponseUserNotAuthenticatedError,
+} from './errors/shorten-errors-schema';
 
 const createShortUrlBodySchema = z.object({
   originalUrl: z.url(),
@@ -61,6 +67,10 @@ export class CreateShortUrlController {
   ) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'Create a new short url',
+    description: 'The auth token is optional',
+  })
   @ApiBody({
     type: CreateShortUrlBodySchemaDto,
     description: 'Login on the app',
@@ -69,9 +79,30 @@ export class CreateShortUrlController {
     type: CreateShortUrlResponseSchema,
     status: 200,
   })
-  @ApiOperation({
-    summary: 'Create a new short url',
-    description: 'The auth token is optional',
+  @ApiResponse({
+    status: 401,
+    type: ResponseUserNotAuthenticatedError,
+  })
+  @ApiResponse({
+    status: 409,
+    type: ResponseSlugAlreadyExistsError,
+  })
+  @ApiExtraModels(
+    ResponseAliasRegexRulesError,
+    ResponseReservedPathsAliasError,
+    ResponseInvalidOriginalUrlError,
+    ResponseOriginalUrlTooLongError,
+  )
+  @ApiResponse({
+    status: 400,
+    schema: {
+      oneOf: [
+        { $ref: getSchemaPath(ResponseAliasRegexRulesError) },
+        { $ref: getSchemaPath(ResponseReservedPathsAliasError) },
+        { $ref: getSchemaPath(ResponseInvalidOriginalUrlError) },
+        { $ref: getSchemaPath(ResponseOriginalUrlTooLongError) },
+      ],
+    },
   })
   @HttpCode(200)
   async handle(
@@ -96,18 +127,6 @@ export class CreateShortUrlController {
 
         case SlugAlreadyExistsError:
           throw new ConflictException(error.message);
-
-        case AliasRegexRulesError:
-          throw new BadRequestException(error.message);
-
-        case ReservedPathsAliasError:
-          throw new BadRequestException(error.message);
-
-        case InvalidOriginalUrlError:
-          throw new BadRequestException(error.message);
-
-        case OriginalUrlTooLongError:
-          throw new BadRequestException(error.message);
 
         default:
           throw new BadRequestException(error.message);

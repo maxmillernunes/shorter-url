@@ -7,6 +7,8 @@ import { UserAlreadyExistsError } from '@/domain/user/application/use-cases/erro
 import { Public } from '@/infra/auth/public';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { createZodDto } from 'nestjs-zod';
+import { ResponseUserAlreadyExistsError } from './users-errors-schema';
+import { ResponseBadRequestDefault } from '../default-errors/bad-request-error';
 
 const registerBodySchema = z.object({
   email: z.email(),
@@ -27,12 +29,21 @@ export class RegisterController {
 
   @Post()
   @ApiBody({ type: RegisterBodySchemaDto, description: 'Create account' })
-  @ApiResponse({
-    status: 201,
-  })
   @ApiOperation({
     summary: 'Create account from user',
     description: 'Create a account from user',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Created',
+  })
+  @ApiResponse({
+    type: ResponseUserAlreadyExistsError,
+    status: 409,
+  })
+  @ApiResponse({
+    type: ResponseBadRequestDefault,
+    status: 400,
   })
   @HttpCode(201)
   async handle(@Body(bodyValidationPipe) body: RegisterBodySchema) {

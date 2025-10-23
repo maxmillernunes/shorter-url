@@ -3,12 +3,16 @@ import {
   Controller,
   Delete,
   HttpCode,
-  NotFoundException,
   Param,
 } from '@nestjs/common';
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { DeleteShortUrlUseCase } from '@/domain/url/application/use-cases/delete-short-url';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { ResponseBadRequestDefault } from '../default-errors/bad-request-error';
 
 @ApiTags('shorten')
 @ApiBearerAuth('jwt-auth')
@@ -21,6 +25,14 @@ export class DeleteShortUrlController {
     summary: 'Delete a short url',
     description: 'Delete the short url that associate a user',
   })
+  @ApiResponse({
+    status: 204,
+    description: 'Deleted',
+  })
+  @ApiResponse({
+    status: 400,
+    type: ResponseBadRequestDefault,
+  })
   @HttpCode(204)
   async handle(@Param('id') id: string) {
     const result = await this.deleteShortUrl.execute({
@@ -30,13 +42,7 @@ export class DeleteShortUrlController {
     if (result.isLeft()) {
       const error = result.value;
 
-      switch (error.constructor) {
-        case ResourceNotFoundError:
-          throw new NotFoundException(error.message);
-
-        default:
-          throw new BadRequestException(error.message);
-      }
+      throw new BadRequestException(error.message);
     }
   }
 }

@@ -12,19 +12,20 @@ import { AuthenticateUserUseCase } from '@/domain/user/application/use-cases/aut
 import { WrongCredentialsError } from '@/domain/user/application/use-cases/errors/wrong-credentials-error';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { createZodDto } from 'nestjs-zod';
+import { ErrorResponseSchema401 } from './auth-errors-schema';
+import { ResponseBadRequestDefault } from '../default-errors/bad-request-error';
 
 const authenticateBodySchema = z.object({
   email: z.email(),
   password: z.string(),
 });
 
+const bodyValidationPipe = new ZodValidationPipe(authenticateBodySchema);
+type AuthenticateBodySchema = z.infer<typeof authenticateBodySchema>;
+
 const authenticateResponseSchema = z.object({
   access_token: z.string(),
 });
-
-const bodyValidationPipe = new ZodValidationPipe(authenticateBodySchema);
-
-type AuthenticateBodySchema = z.infer<typeof authenticateBodySchema>;
 
 class AuthenticateBodySchemaDto extends createZodDto(authenticateBodySchema) {}
 class AuthenticateResponseSchema extends createZodDto(
@@ -38,6 +39,10 @@ export class AuthenticateController {
   constructor(private authenticateUser: AuthenticateUserUseCase) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'Authenticate user after register',
+    description: 'Authenticate user',
+  })
   @ApiBody({
     type: AuthenticateBodySchemaDto,
     description: 'Login on the app',
@@ -46,9 +51,13 @@ export class AuthenticateController {
     type: AuthenticateResponseSchema,
     status: 200,
   })
-  @ApiOperation({
-    summary: 'Authenticate user after register',
-    description: 'Authenticate user',
+  @ApiResponse({
+    type: ErrorResponseSchema401,
+    status: 401,
+  })
+  @ApiResponse({
+    type: ResponseBadRequestDefault,
+    status: 400,
   })
   async handle(@Body(bodyValidationPipe) body: AuthenticateBodySchema) {
     const { email, password } = body;

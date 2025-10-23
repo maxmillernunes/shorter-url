@@ -56,13 +56,13 @@ export class FetchShortUrlsByUserIdController {
   constructor(private fetchShortUrlsByUserId: FetchUrlsByUserIdUseCase) {}
 
   @Get()
-  @ApiResponse({
-    type: FetchShortUrlResponseSchema,
-    status: 200,
-  })
   @ApiOperation({
     summary: 'Fetch the all short url that associate a user',
     description: 'Fetch the all short url that associate a user paginated',
+  })
+  @ApiResponse({
+    type: FetchShortUrlResponseSchema,
+    status: 200,
   })
   @HttpCode(200)
   async handle(
